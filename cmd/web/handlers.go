@@ -1,8 +1,10 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"strconv"
+	"text/template"
 )
 
 // define a handler function that writes a byte slice to the response
@@ -15,8 +17,26 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-
-	w.Write([]byte("Hello, World!"))
+	// Initialize a slice containing the paths to the two files. It's important
+	// to note that the file containing our base template must be the *first*
+	// file in the slice.
+	files := []string{"./ui/html/partials/nav.tmpl.html", "./ui/html/base.tmpl.html", "./ui/html/home-page.tmpl.html"}
+	// Use the template.ParseFiles() function to read the files and store the
+	// templates in a template set. Notice that we can pass the slice of file
+	// paths as a variadic parameter?
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		log.Print(err.Error())
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	// Use the ExecuteTemplate() method to write the content of the "base"
+	// template as the response body.
+	err = ts.ExecuteTemplate(w, "base", nil)
+	if err != nil {
+		log.Print(err.Error())
+		http.Error(w, "Internal Server Error", 500)
+	}
 }
 
 func snippetView(w http.ResponseWriter, r *http.Request) {
