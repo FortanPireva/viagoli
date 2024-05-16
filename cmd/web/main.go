@@ -5,27 +5,6 @@ import (
 	"net/http"
 )
 
-// define a handler function that writes a byte slice to the response
-// writer. This will be registered as the handler for the "/" URL pattern
-// r = pointer to a struct that holds information about the request
-
-func home(w http.ResponseWriter, r *http.Request) {
-
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-
-	w.Write([]byte("Hello, World!"))
-}
-
-func snippetView(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Display the snippet"))
-}
-func snippetCreate(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create a new snippet"))
-}
-
 func main() {
 	// Use the http.newServeMux() function to create a new servemux, then register the home function as the handler for the "/" URL pattern
 	mux := http.NewServeMux()
