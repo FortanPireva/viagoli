@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"strconv"
 	"text/template"
@@ -11,7 +11,7 @@ import (
 // writer. This will be registered as the handler for the "/" URL pattern
 // r = pointer to a struct that holds information about the request
 
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
@@ -26,7 +26,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// paths as a variadic parameter?
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Print(err.Error())
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
@@ -34,21 +34,21 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// template as the response body.
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		log.Print(err.Error())
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 	}
 }
 
-func snippetView(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
 		return
 	}
-	w.Write([]byte("Display the snippet"))
+	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
-func snippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
 		// only possible to call it once on a response writer

@@ -62,3 +62,26 @@ served in their own goroutine. For busy servers, this means it’s very likely t
 called by your handlers will be running concurrently. While this helps make Go blazingly fast,
 the downside is that you need to be aware of (and protect against) race conditions when
 accessing shared resources from your handlers.
+
+
+### Logging
+
+logging to standard output and error and redirecting all logs to corresponding files
+during runtime.
+
+    go run ./cmd/web >>/tmp/info.log 2>>/tmp/error.log
+
+
+## Dependency Injection
+Most web applications need multiple dependencies 
+that their handlers need to access, such as database connection pool, 
+centralized error handlers and template caches.
+
+For applications where all your handlers are in the same package, like ours, a neat way to
+inject dependencies is to put them into a custom application struct, and then define your
+handler functions as methods against application.
+
+    type application struct {
+        errorLog *log.Logger
+        infoLog  *log.Logger
+    }
