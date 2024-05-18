@@ -85,3 +85,28 @@ handler functions as methods against application.
         errorLog *log.Logger
         infoLog  *log.Logger
     }
+
+
+# Dynamic HTML templates
+Dynamic content escaping
+The html/template package automatically escapes any data that is yielded between {{ }}
+tags. This behavior is hugely helpful in avoiding cross-site scripting (XSS) attacks, and is the
+reason that you should use the html/template package instead of the more generic
+text/template package that Go also provides.
+
+Template actions and functions
+In this section we’re going to look at the template actions and functions that Go provides.
+We’ve already talked about some of the actions — {{define}}, {{template}} and {{block}}
+— but there are three more which you can use to control the display of dynamic data —
+{{if}}, {{with}} and {{range}}.
+Action Description
+{{if .Foo}} C1 {{else}} C2 {{end}} If .Foo is not empty then render the content C1,
+otherwise render the content C2.
+{{with .Foo}} C1 {{else}} C2 {{end}} If .Foo is not empty, then set dot to the value of
+.Foo and render the content C1, otherwise render the
+content C2.
+{{range .Foo}} C1 {{else}} C2 {{end}} If the length of .Foo is greater than zero then loop
+over each element, setting dot to the value of each
+element and rendering the content C1. If the length of
+.Foo is zero then render the content C2. The underlying
+type of .Foo must be an array, slice, map, or channel.

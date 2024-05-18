@@ -71,6 +71,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
 	// Initialize a slice containing the paths to the view.tmpl file,
 	// plus the base layout and navigation partial that we made earlier.
 	files := []string{
@@ -84,9 +85,11 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
+	data := &templateData{Snippet: snippet}
 	// And then execute them. Notice how we are passing in the snippet
 	// data (a models.Snippet struct) as the final parameter?
-	err = ts.ExecuteTemplate(w, "base", snippet)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.serverError(w, err)
 	}
