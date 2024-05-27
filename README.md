@@ -110,3 +110,33 @@ over each element, setting dot to the value of each
 element and rendering the content C1. If the length of
 .Foo is zero then render the content C2. The underlying
 type of .Foo must be an array, slice, map, or channel.
+
+
+# Middleware
+
+> A Go application is a chain of *ServeHTTP()* methods being called
+one after another
+
+
+## The pattern
+
+Looks something like this
+```go
+    func middleware(next http.Handler) http.Handler {
+        fn := func(w http.ResponseWriter, r *http.Request) {
+            // execute middleware logic here
+
+            next.ServeHTTP(w, r)
+        }
+
+        return http.HandlerFunc(fn)
+    }
+```
+
+It's important to know that when the last handler in the chain returns,
+control is passed back up the chain in the reverse direction. 
+
+## Early-returns
+
+
+Another thing to mention is that if you call return in your middleware function before you call next.ServeHTTP(), then the chain will stop being executed and control will flow back upstream.
